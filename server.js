@@ -39,6 +39,8 @@ if (process.env.APP_ENV === "prod") {
     app.use(morgan("combined", {
         stream: stream
     }));
+} else {
+    app.use(morgan('dev'));
 }
 
 app.use('/', routes);
