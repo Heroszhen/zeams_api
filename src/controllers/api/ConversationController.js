@@ -30,3 +30,12 @@ exports.getConversations = async (req, res) => {
         return res.status(400).json();
     }
 }
+
+exports.addConversation = async (req, res) => {
+    try {
+        
+        return res.status(201).json({"data": ""});
+    } catch (err) {
+        return res.status(400).json();
+    }
+}
