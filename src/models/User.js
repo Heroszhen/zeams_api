@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     created: { type: Date, default: Date.now },
     photo: { type: String, default: null },
     interlocutors: [
-        {type: mongoose.Schema.Types.ObjectId, ref:'user'}
+        {user: {type: mongoose.Schema.Types.ObjectId, ref:'user'}, created:{ type: Date, default: Date.now }}
     ]
 });
 

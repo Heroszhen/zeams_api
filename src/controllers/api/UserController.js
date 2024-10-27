@@ -111,17 +111,22 @@ exports.editProfilePhoto  = async (req, res) => {
 
 exports.getInterlocutors  = async (req, res) => {
     try {
-        const user = await userModel.model
-                            .findOne({'_id': req.params.id})
-                            .populate('interlocutors', ['_id', 'name', 'photo']);
-        if (!auth.checkAccess(req.session.user, user)) {
-            return res.status(403).json();
-        }
+        // const user = await userModel.model
+        //                     .findOne({'_id': req.params.id})
+        //                     .populate('interlocutors', ['_id', 'name', 'photo']);
+        // if (!auth.checkAccess(req.session.user, user)) {
+        //     return res.status(403).json();
+        // }
+        const user = req.session.user
 
+        let interlocutors = [];
         let conversations = [];
         for(let item of user.interlocutors) {
+            let interlocutor = await userModel.model.findById(item.user._id).select(['_id', 'name', 'photo']);
+            interlocutors.push(interlocutor);
+
             let result = await conversationModel.model.find({
-                $or: [{sender: user, receiver: item}, {sender: item, receiver: user}]
+                $or: [{sender: user, receiver: item.user}, {sender: item.user, receiver: user}]
             })
             .limit(10)
             .sort({created: -1});
@@ -129,10 +134,8 @@ exports.getInterlocutors  = async (req, res) => {
         }
 
         return res.json({
-            data: {
-                interlocutors: user.interlocutors,
-                conversations: conversations
-            }
+            interlocutors: interlocutors,
+            conversations: conversations
         });
     } catch(err) {
         return res.status(400).json();
@@ -151,18 +154,28 @@ exports.addInterlocutors  = async (req, res) => {
                                 .select(["_id", "name", "photo"]);
         let checked = true;
         for(let entry of user.interlocutors) {
-            if(entry.toString() === interlocutor._id.toString()) {
+            if(entry.user.toString() === interlocutor._id.toString()) {
                 checked = false;
                 break;
             }
         }
+
+        let conversations = [];
         if (checked){
-            user.interlocutors.push(interlocutor);
+            user.interlocutors.push({user: interlocutor});
             await user.save();
+
+            let result = await conversationModel.model.find({
+                $or: [{sender: user, receiver: interlocutor}, {sender: interlocutor, receiver: user}]
+            })
+            .limit(10)
+            .sort({created: -1});
+            conversations = conversations.concat(result.reverse());
         }
 
         return res.status(201).json({
-            data: interlocutor
+            interlocutor: interlocutor,
+            conversations: conversations
         });
     } catch(err) {
         return res.status(400).json();
@@ -175,7 +188,7 @@ exports.deleteInterlocutors  = async (req, res) => {
         if (!auth.checkAccess(req.session.user, user)) {
             return res.status(403).json();
         }
-        user.interlocutors = user.interlocutors.filter(item => item.toString() !== req.params.id2);
+        user.interlocutors = user.interlocutors.filter(item => item.user.toString() !== req.params.id2);
         await user.save();
         
         return res.status(204).json();

@@ -79,7 +79,7 @@ const createUsers = async () => {
     });
 
     if (i <= 5) {
-      admin.interlocutors.push(user);
+      admin.interlocutors.push({user: user});
       await admin.save();
     }
   }

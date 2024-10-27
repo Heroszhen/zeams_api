@@ -14,8 +14,8 @@ router.use(auth.checkToken);
 router.get("/users/profile", userController.getProfile);
 router.patch("/users/profile", userController.editProfile);
 router.post("/users/profile/photo", userController.editProfilePhoto);
-router.get("/users/:id/interlocutors", userController.getInterlocutors);
-router.post("/users/:id/interlocutor", userController.addInterlocutors);
+router.get("/users/interlocutors", userController.getInterlocutors);
+router.post("/users/interlocutor/:id", userController.addInterlocutors);
 router.delete("/users/:id/interlocutor/:id2", userController.deleteInterlocutors);
 //conversation
 router.get("/conversations/user/:id/interlocutor/:id2", conversationController.getConversations);
