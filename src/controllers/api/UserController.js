@@ -27,11 +27,12 @@ exports.login = async (req, res) => {
 }
 
 exports.getProfile  = async (req, res) => {
-    const user = await userModel.model.findOne({'_id': req.params.id}).exec();
-    if (user === null)return res.status(404).json();
-    if (!auth.checkAccess(req.session.user, user)) {
-        return res.status(403).json({"message": "Access denied"});
-    }
+    // const user = await userModel.model.findOne({'_id': req.params.id}).exec();
+    // if (user === null)return res.status(404).json();
+    // if (!auth.checkAccess(req.session.user, user)) {
+    //     return res.status(403).json({"message": "Access denied"});
+    // }
+    const user = req.session.user;
 
     return res.json({"data": {
         _id: user._id.toString(),
@@ -43,11 +44,12 @@ exports.getProfile  = async (req, res) => {
 }
 
 exports.editProfile  = async (req, res) => {
-    const user = await userModel.model.findOne({'_id': req.params.id}).exec();
-    if (user === null)return res.status(404).json();
-    if (!auth.checkAccess(req.session.user, user)) {
-        return res.status(403).json({"message": "Access denied"});
-    }
+    // const user = await userModel.model.findOne({'_id': req.params.id}).exec();
+    // if (user === null)return res.status(404).json();
+    // if (!auth.checkAccess(req.session.user, user)) {
+    //     return res.status(403).json({"message": "Access denied"});
+    // }
+    const user = req.session.user;
 
     const post = req.body;
     user.name = post.name;
@@ -68,11 +70,12 @@ exports.editProfile  = async (req, res) => {
 }
 
 exports.editProfilePhoto  = async (req, res) => {
-    const user = await userModel.model.findOne({'_id': req.params.id}).exec();
-    if (user === null)return res.status(404).json();
-    if (!auth.checkAccess(req.session.user, user)) {
-        return res.status(403).json({"message": "Access denied"});
-    }
+    // const user = await userModel.model.findOne({'_id': req.params.id}).exec();
+    // if (user === null)return res.status(404).json();
+    // if (!auth.checkAccess(req.session.user, user)) {
+    //     return res.status(403).json({"message": "Access denied"});
+    // }
+    const user = req.session.user;
 
     upload(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
