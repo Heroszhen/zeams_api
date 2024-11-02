@@ -7,6 +7,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const fs = require('fs');
+const SocketServer = require('./socket/SocketServer.js');
 
 const db = require("./src/models/db");
 (async () => {
@@ -40,11 +41,11 @@ if (process.env.APP_ENV === "prod") {
         stream: stream
     }));
 } else {
-    app.use(morgan('dev'));
+    //app.use(morgan('dev'));
 }
 
 app.use('/', routes);
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port);
-console.log(process.env.DOMAIN)
+new SocketServer(server);

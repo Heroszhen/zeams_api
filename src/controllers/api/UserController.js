@@ -111,18 +111,13 @@ exports.editProfilePhoto  = async (req, res) => {
 
 exports.getInterlocutors  = async (req, res) => {
     try {
-        // const user = await userModel.model
-        //                     .findOne({'_id': req.params.id})
-        //                     .populate('interlocutors', ['_id', 'name', 'photo']);
-        // if (!auth.checkAccess(req.session.user, user)) {
-        //     return res.status(403).json();
-        // }
         const user = req.session.user
 
         let interlocutors = [];
         let conversations = [];
         for(let item of user.interlocutors) {
             let interlocutor = await userModel.model.findById(item.user._id).select(['_id', 'name', 'photo']);
+            interlocutor.created = item.created;
             interlocutors.push(interlocutor);
 
             let result = await conversationModel.model.find({
