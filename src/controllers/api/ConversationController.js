@@ -50,7 +50,6 @@ exports.addConversation = async (req, res) => {
 
             let tab = [];
             if (req.files) {
-                console.log(req.files)
                 for(let entry of req.files) {
                     const file = await fileService.addFile(entry, uniqid('profile_') + entry.originalname, user);
                     tab.push(file);

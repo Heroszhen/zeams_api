@@ -114,7 +114,9 @@ exports.getInterlocutors  = async (req, res) => {
                 $or: [{sender: user, receiver: item.user}, {sender: item.user, receiver: user}]
             })
             .limit(10)
-            .sort({created: -1});
+            .sort({created: -1})
+            .populate('files')
+            ;
             conversations = conversations.concat(result.reverse());
         }
 
@@ -154,7 +156,9 @@ exports.addInterlocutors  = async (req, res) => {
                 $or: [{sender: user, receiver: interlocutor}, {sender: interlocutor, receiver: user}]
             })
             .limit(10)
-            .sort({created: -1});
+            .sort({created: -1})
+            .populate('files')
+            ;
             conversations = conversations.concat(result.reverse());
         }
 
