@@ -23,6 +23,7 @@ module.exports = class SocketServer {
         });
 
         socket.on("client:user:setUserInfo", this.setUserInfo.bind(this, socket));
+        socket.on("client:conversation:sendMessage", this.sendChatMessage.bind(this, socket));
     }
 
     addUser(socketId) {
@@ -54,6 +55,16 @@ module.exports = class SocketServer {
         if (index !== null) {
             this.allUsers[index].profile = data.profile;
             socket.broadcast.emit('server:user:sendProfile', data.profile);
+        }
+    }
+
+    sendChatMessage(socket, data) {
+        socket.emit('server:conversation:sendMessage', data.message);
+        for(let user of this.allUsers) {
+            if (user.profile?._id === data.message.receiver) {
+                this.io.to(user.socketId).emit('server:conversation:sendMessage', data.message);
+                break;
+            }
         }
     }
 }
