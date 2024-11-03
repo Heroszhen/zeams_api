@@ -1,7 +1,6 @@
 module.exports = class User {
-    constructor(socketId, _id = '', name = '') {
+    constructor(socketId, profile = null) {
         this.socketId = socketId;
-        this._id = _id;
-        this.name = name;
+        this.profile = profile;
     }
 }
