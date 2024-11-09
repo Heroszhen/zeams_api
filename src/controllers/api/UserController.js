@@ -124,7 +124,7 @@ exports.getInterlocutors  = async (req, res) => {
             interlocutors: interlocutors,
             conversations: conversations
         });
-    } catch(err) {
+    } catch(err) {console.log(err)
         return res.status(400).json();
     }
 }

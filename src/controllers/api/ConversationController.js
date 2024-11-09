@@ -41,9 +41,30 @@ exports.addConversation = async (req, res) => {
         const user = req.session.user
         uploads(req, res, async function (err) {
             const receiver = await userModel.model.findById(req.body.receiver);
+            let checked = false, interlocutor = null;
             for(let i = 0; i < user.interlocutors.length; i++) {
-                if (user.interlocutors[i].user._id === req.body.receiver) {
+                if (user.interlocutors[i].user._id.toString() === req.body.receiver) {
                     user.interlocutors[i].created = new Date();
+                    checked = true;
+                    break;
+                }
+            }
+            if(!checked) {
+                user.interlocutors.push({user:receiver});
+            }
+            await user.save();
+            receiver = {
+                _id: receiver._id,
+                name: receiver.name,
+                photo: receiver.photo,
+                created: new Date(),
+            }
+
+            checked = false;
+            for(let i = 0; i < receiver.interlocutors.length; i++) {
+                if (receiver.interlocutors[i].user._id.toString() === user._id.toString()) {
+                    receiver.interlocutors[i].created = new Date();
+                    checked = true;
                     break;
                 }
             }
@@ -64,7 +85,7 @@ exports.addConversation = async (req, res) => {
             });
             conversation = await conversationModel.model.findById( conversation._id.toString()).populate('files');
 
-            return res.status(201).json({conversation});
+            return res.status(201).json({conversation:conversation, interlocutor:interlocutor});
         });
     } catch (err) {
         return res.status(400).json();

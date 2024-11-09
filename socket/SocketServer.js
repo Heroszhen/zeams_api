@@ -59,10 +59,10 @@ module.exports = class SocketServer {
     }
 
     sendChatMessage(socket, data) {
-        socket.emit('server:conversation:sendMessage', data.message);
+        socket.emit('server:conversation:sendMessage', data);
         for(let user of this.allUsers) {
-            if (user.profile?._id === data.message.receiver) {
-                this.io.to(user.socketId).emit('server:conversation:sendMessage', data.message);
+            if (user.profile?._id === data.conversation.receiver) {
+                this.io.to(user.socketId).emit('server:conversation:sendMessage', data);
                 break;
             }
         }

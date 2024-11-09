@@ -65,11 +65,17 @@ const createUsers = async () => {
   });
 
   hash = await bcrypt.hash("bbbbbbbb", parseInt(process.env.BCRYPT_SALTROUNDS));
-  await userModel.model.create({
+  const user = await userModel.model.create({
     name: "Hero",
     email: "zyang@sogec-marketing.fr",
     password: hash,
   });
+
+  admin.interlocutors.push({user:user});
+  await admin.save();
+
+  user.interlocutors.push({user:admin});
+  await user.save();
 
   for(let i = 0; i < 20; i++) {
     let user = await userModel.model.create({
