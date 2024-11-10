@@ -40,7 +40,7 @@ exports.addConversation = async (req, res) => {
     try {
         const user = req.session.user
         uploads(req, res, async function (err) {
-            const receiver = await userModel.model.findById(req.body.receiver);
+            let receiver = await userModel.model.findById(req.body.receiver);
             let checked = false, interlocutor = null;
             for(let i = 0; i < user.interlocutors.length; i++) {
                 if (user.interlocutors[i].user._id.toString() === req.body.receiver) {
@@ -53,12 +53,6 @@ exports.addConversation = async (req, res) => {
                 user.interlocutors.push({user:receiver});
             }
             await user.save();
-            receiver = {
-                _id: receiver._id,
-                name: receiver.name,
-                photo: receiver.photo,
-                created: new Date(),
-            }
 
             checked = false;
             for(let i = 0; i < receiver.interlocutors.length; i++) {
@@ -67,6 +61,13 @@ exports.addConversation = async (req, res) => {
                     checked = true;
                     break;
                 }
+            }
+
+            receiver = {
+                _id: receiver._id,
+                name: receiver.name,
+                photo: receiver.photo,
+                created: new Date(),
             }
 
             let tab = [];
