@@ -110,14 +110,8 @@ exports.getInterlocutors  = async (req, res) => {
             interlocutor.created = item.created;
             interlocutors.push(interlocutor);
 
-            let result = await conversationModel.model.find({
-                $or: [{sender: user, receiver: item.user}, {sender: item.user, receiver: user}]
-            })
-            .limit(10)
-            .sort({created: -1})
-            .populate('files')
-            ;
-            conversations = conversations.concat(result.reverse());
+            let result = await conversationModel.findBySenderAndReceiver(user, item.user);
+            conversations = conversations.concat(result);
         }
 
         return res.json({
@@ -152,13 +146,7 @@ exports.addInterlocutors  = async (req, res) => {
             user.interlocutors.push({user: interlocutor});
             await user.save();
 
-            let result = await conversationModel.model.find({
-                $or: [{sender: user, receiver: interlocutor}, {sender: interlocutor, receiver: user}]
-            })
-            .limit(10)
-            .sort({created: -1})
-            .populate('files')
-            ;
+            let result = await conversationModel.findBySenderAndReceiver(user, interlocutor);
             conversations = conversations.concat(result.reverse());
         }
 

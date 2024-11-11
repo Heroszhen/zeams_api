@@ -9,28 +9,17 @@ const fileService = require('../../services/FileService');
 
 exports.getConversations = async (req, res) => {
     try {
-        const user = await userModel.model.findById(req.params.id);
-        const user2 = await userModel.model.findById(req.params.id2);
+        const user = req.session.user;
+        const user2 = await userModel.model.findById(req.params.id);
         let conversations = [];
         if ([undefined, ''].includes(req.query.last)) {
-            conversations = await conversationModel.model.find({
-                $or: [{sender: user, receiver: user2}, {sender: user2, receiver: user}]
-            })
-            .limit(10)
-            .sort({created: -1});
+            conversations = await conversationModel.findBySenderAndReceiver(user, user2);
         } else {
-            const last = await conversationModel.model.findById(req.query.last);
-            conversations = await conversationModel.model.find({
-                $and: [
-                    {created: {$lt: last.created}},
-                    {$or: [{sender: user, receiver: user2}, {sender: user2, receiver: user}]}
-                ]
-            })
-            .limit(10)
-            .sort({created: -1});  
+            const last = await conversationModel.model.findById(req.query.last);  
+            conversations = await conversationModel.findBySenderAndReceiver(user, user2, last);
         }
 
-        return res.json({"data": conversations.reverse()});
+        return res.json({"conversations": conversations});
     } catch(err) {
         return res.status(400).json();
     }
