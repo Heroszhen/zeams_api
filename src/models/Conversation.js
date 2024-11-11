@@ -28,7 +28,8 @@ exports.findBySenderAndReceiver = async function(user1, user2, last = null) {
         tab = await conversationModel.find({
             $and: [
                 {created: {$lt: last.created}},
-                {$or: [{sender: user1, receiver: user2}, {sender: user2, receiver: user1}]}
+                {$or: [{sender: user1, receiver: user2}, {sender: user2, receiver: user1}]},
+                { _id: { $ne: last._id } }
             ]
         })
         .limit(10)
