@@ -30,7 +30,7 @@ exports.addConversation = async (req, res) => {
         const user = req.session.user
         uploads(req, res, async function (err) {
             let receiver = await userModel.model.findById(req.body.receiver);
-            let checked = false, interlocutor = null;
+            let checked = false, interlocutor = receiver;
             for(let i = 0; i < user.interlocutors.length; i++) {
                 if (user.interlocutors[i].user._id.toString() === req.body.receiver) {
                     user.interlocutors[i].created = new Date();
